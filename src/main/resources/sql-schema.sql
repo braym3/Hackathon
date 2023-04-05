@@ -8,9 +8,28 @@ DROP TABLE IF EXISTS `ims`.`customers`;
 
 drop schema if exists ims;
 
-CREATE SCHEMA IF NOT EXISTS `ims`;
+CREATE TABLE IF NOT EXISTS `qagl_ims`.`order_lines` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `quantity` INT NOT NULL,
+  `orders_id` INT NOT NULL,
+  `items_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_order_lines_orders1_idx` (`orders_id` ASC) VISIBLE,
+  INDEX `fk_order_lines_items1_idx` (`items_id` ASC) VISIBLE,
+  CONSTRAINT `fk_order_lines_orders1`
+    FOREIGN KEY (`orders_id`)
+    REFERENCES `qagl_ims`.`orders` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_order_lines_items1`
+    FOREIGN KEY (`items_id`)
+    REFERENCES `qagl_ims`.`items` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
-USE `ims` ;
+USE `qagl_ims` ;
 
 CREATE TABLE IF NOT EXISTS `customers` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
