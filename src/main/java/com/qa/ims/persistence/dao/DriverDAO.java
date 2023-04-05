@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.qa.ims.persistence.domain.Customer;
 import com.qa.ims.persistence.domain.Driver;
 import com.qa.ims.utils.DBUtils;
 
@@ -35,20 +34,20 @@ public class DriverDAO implements Dao<Driver>{
 
 
 	/**
-	 * Reads all customers from the database
+	 * Reads all drivers from the database
 	 * 
-	 * @return A list of customers
+	 * @return A list of drivers
 	 */
 	@Override
 	public List<Driver> readAll() {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				Statement statement = connection.createStatement();
 				ResultSet resultSet = statement.executeQuery("SELECT * FROM drivers");) {
-			List<Driver> customers = new ArrayList<>();
+			List<Driver> drivers = new ArrayList<>();
 			while (resultSet.next()) {
-				customers.add(modelFromResultSet(resultSet));
+				drivers.add(modelFromResultSet(resultSet));
 			}
-			return customers;
+			return drivers;
 		} catch (SQLException e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
@@ -118,7 +117,7 @@ public class DriverDAO implements Dao<Driver>{
 	public Driver update(Driver driver) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("UPDATE customers SET first_name = ?, surname = ?, warehouse_id = ? WHERE id = ?");) {
+						.prepareStatement("UPDATE drivers SET first_name = ?, surname = ?, warehouse_id = ? WHERE id = ?");) {
 			statement.setString(1, driver.getFirstName());
 			statement.setString(2, driver.getSurname());
 			statement.setLong(3, driver.getWarehouseID());
