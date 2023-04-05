@@ -2,20 +2,49 @@ package com.qa.ims.persistence.domain;
 
 public class Order {
 
-	private Long id, customerId;
-	private String orderName;
+	private Long id, customerId, driverId;
+	private Long delivered, warehouseId;
 
-	public Order(String orderName, Long customerId) {
+	public Order(Long customerId) {
 		this.customerId = customerId;
-		this.orderName = orderName;
-	}
+		}
 
-	public Order(Long id, String orderName, Long customerId) {
+	public Order(Long id, Long customerId) {
 		this.id = id;
 		this.customerId = customerId;
-		this.orderName = orderName;
+	}
+	
+
+	public Order(Long customerId, Long driverId, Long delivered, Long warehouseId) {
+		this.customerId = customerId;
+		this.driverId = driverId;
+		this.delivered = delivered;
+		this.warehouseId = warehouseId;
 	}
 
+	public Order(Long id, Long customerId, Long driverId, Long delivered, Long warehouseId) {
+		this.id = id;
+		this.customerId = customerId;
+		this.driverId = driverId;
+		this.delivered = delivered;
+		this.warehouseId = warehouseId;
+	}
+
+	public Long getDriverId() {
+		return driverId;
+	}
+
+	public void setDriverId(Long driverId) {
+		this.driverId = driverId;
+	}
+
+	public Long getDelivered() {
+		return delivered;
+	}
+
+	public void setDelivered(Long delivered) {
+		this.delivered = delivered;
+	}
 
 	public Long getId() {
 		return id;
@@ -33,26 +62,31 @@ public class Order {
 		this.customerId = customerId;
 	}
 
-	public String getOrderName() {
-		return orderName;
+	public Long getWarehouseId() {
+		return warehouseId;
 	}
 
-	public void setOrderName(String firstName) {
-		this.orderName = firstName;
+	public void setWarehouseId(Long warehouseId) {
+		this.warehouseId = warehouseId;
 	}
+
+	
 
 	@Override
 	public String toString() {
-		return "id:" + id + " orderName:" + orderName + " customerId:" + customerId;
+		return "Order [id=" + id + ", customerId=" + customerId + ", driverId=" + driverId + ", delivered=" + delivered
+				+ ", warehouseId=" + warehouseId + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((orderName == null) ? 0 : orderName.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
+		result = prime * result + ((driverId == null) ? 0 : driverId.hashCode());
+		result = prime * result + ((delivered == null) ? 0 : delivered.hashCode());
+		result = prime * result + ((warehouseId == null) ? 0 : warehouseId.hashCode());
 		return result;
 	}
 
@@ -65,11 +99,6 @@ public class Order {
 		if (getClass() != obj.getClass())
 			return false;
 		Order other = (Order) obj;
-		if (getOrderName() == null) {
-			if (other.getOrderName() != null)
-				return false;
-		} else if (!getOrderName().equals(other.getOrderName()))
-			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -80,7 +109,24 @@ public class Order {
 				return false;
 		} else if (!customerId.equals(other.customerId))
 			return false;
+		if (driverId == null) {
+			if (other.driverId != null)
+				return false;
+		} else if (!driverId.equals(other.driverId))
+			return false;
+		if (delivered == null) {
+			if (other.delivered != null)
+				return false;
+		} else if (!delivered.equals(other.delivered))
+			return false;
+		if (warehouseId == null) {
+			if (other.warehouseId != null)
+				return false;
+		} else if (!warehouseId.equals(other.warehouseId))
+			return false;
 		return true;
 	}
+
+
 
 }

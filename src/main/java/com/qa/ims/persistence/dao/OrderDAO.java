@@ -21,9 +21,12 @@ public class OrderDAO implements Dao<Order> {
 	@Override
 	public Order modelFromResultSet(ResultSet resultSet) throws SQLException {
 		Long id = resultSet.getLong("id");
-		String orderName = resultSet.getString("order_name");
+		Long driverId = resultSet.getLong("driver_id");
 		Long customerId = resultSet.getLong("customer_id");
-		return new Order(id, orderName, customerId);
+		Long delivered = resultSet.getLong("delivered");
+		Long warehouseId = resultSet.getLong("warehouse_id");
+
+		return new Order(id, customerId, driverId, delivered, warehouseId);
 	}
 
 	/**
@@ -70,9 +73,11 @@ public class OrderDAO implements Dao<Order> {
 	public Order create(Order order) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("INSERT INTO orders(order_name, customer_id) VALUES (?, ?)");) {
-			statement.setString(1, order.getOrderName());
-			statement.setLong(2, order.getCustomerId());
+						.prepareStatement("INSERT INTO orders(customer_id, driver_id, delivered, warehouse_id) VALUES (?, ?, ?,?)");) {
+			statement.setLong(1, order.getCustomerId());
+			statement.setLong(2, order.getDriverId());
+			statement.setLong(3, order.getDelivered());
+			statement.setLong(4, order.getWarehouseId());
 			statement.executeUpdate();
 			return readLatest();
 		} catch (Exception e) {
@@ -109,10 +114,12 @@ public class OrderDAO implements Dao<Order> {
 	public Order update(Order order) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("UPDATE orders SET order_name = ?, customer_id = ? WHERE id = ?");) {
-			statement.setString(1, order.getOrderName());
-			statement.setLong(2, order.getCustomerId());
-			statement.setLong(3, order.getId());
+						.prepareStatement("UPDATE orders SET customer_id = ?, driver_id = ?, delivered = ?, warehouse_id = ? WHERE id = ?");) {
+			statement.setLong(1, order.getCustomerId());
+			statement.setLong(2, order.getDriverId());
+			statement.setLong(3, order.getDelivered());
+			statement.setLong(4, order.getWarehouseId());
+			statement.setLong(5, order.getId());
 			statement.executeUpdate();
 			return read(order.getId());
 		} catch (Exception e) {

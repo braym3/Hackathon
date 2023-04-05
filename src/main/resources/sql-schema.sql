@@ -28,10 +28,14 @@ CREATE TABLE IF NOT EXISTS `items` (
 
 CREATE TABLE IF NOT EXISTS `orders` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `order_name` VARCHAR(40) DEFAULT NULL,
     `customer_id` INT(11) NOT NULL,
+    `driver_id` INT(11),
+    `delivered` INT(1) DEFAULT 0,
+    `warehouse_id` INT(11),
     PRIMARY KEY (`id`),
-    FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON DELETE CASCADE
+    FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`driver_id`) REFERENCES `drivers`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `itemorders`

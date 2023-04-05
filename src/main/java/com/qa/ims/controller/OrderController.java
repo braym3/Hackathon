@@ -50,11 +50,15 @@ public class OrderController implements CrudController<Order> {
 	 */
 	@Override
 	public Order create() {
-		LOGGER.info("Please enter an order name");
-		String orderName = utils.getString();
 		LOGGER.info("Please enter a customerID");
 		Long customerId = utils.getLong();
-		Order order = orderDAO.create(new Order(orderName, customerId));
+		LOGGER.info("Please enter a driverID");
+		Long driverId = utils.getLong();
+		LOGGER.info("Please enter a delivered state");
+		Long delivered = utils.getLong();
+		LOGGER.info("Please enter a warehouseID");
+		Long warehouseId = utils.getLong();
+		Order order = orderDAO.create(new Order(customerId,driverId,delivered,warehouseId));
 		LOGGER.info("Order created");
 		return order;
 	}
@@ -66,11 +70,15 @@ public class OrderController implements CrudController<Order> {
 	public Order update() {
 		LOGGER.info("Please enter the id of the order you would like to update");
 		Long id = utils.getLong();
-		LOGGER.info("Please enter an order name");
-		String orderName = utils.getString();
-		LOGGER.info("Please enter a customerId");
+		LOGGER.info("Please enter a customerID");
 		Long customerId = utils.getLong();
-		Order order = orderDAO.update(new Order(id, orderName, customerId));
+		LOGGER.info("Please enter a driverID");
+		Long driverId = utils.getLong();
+		LOGGER.info("Please enter a delivered state");
+		Long delivered = utils.getLong();
+		LOGGER.info("Please enter a warehouseID");
+		Long warehouseId = utils.getLong();
+		Order order = orderDAO.update(new Order(id, customerId,driverId,delivered,warehouseId));
 		LOGGER.info("Order Updated");
 		return order;
 	}
