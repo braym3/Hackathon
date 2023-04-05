@@ -8,6 +8,7 @@ import com.qa.ims.controller.Action;
 import com.qa.ims.controller.CrudController;
 import com.qa.ims.controller.CustomerController;
 import com.qa.ims.controller.DriverController;
+import com.qa.ims.controller.DriversSubmenu;
 import com.qa.ims.persistence.domain.Domain;
 import com.qa.ims.controller.Sections;
 import com.qa.ims.controller.ItemController;
@@ -60,11 +61,12 @@ public class IMS {
 	private void sectionAction(Sections section) {
 		boolean changeSection = false;
 		Domain domain = null;
+		DriversSubmenu driversSubmenu = null;
 		do {
 
 			switch (section) {
 			case DRIVERS:
-				LOGGER.info("I'm a Driver");
+				driversSubmenu = driverSystem(driversSubmenu);
 				return;
 			case MANAGERS:
 				LOGGER.info("I'm a Manager");
@@ -87,8 +89,65 @@ public class IMS {
 			if (domain == Domain.STOP) {
 				changeSection = true;
 			}
+			if (driversSubmenu == DriversSubmenu.RETURN) {
+				changeSection = true;
+			}
 		} while (!changeSection);
 	}
+
+	public DriversSubmenu driverSystem(DriversSubmenu driversSubmenu) {
+		LOGGER.info("Welcome to the Driver Management System!");
+
+		do {
+			LOGGER.info("What would you like to do?");
+			DriversSubmenu.printDomains();
+
+			driversSubmenu = DriversSubmenu.getDomain(utils);
+
+			driversSubmenu = driverAction(driversSubmenu);
+
+
+		} while (driversSubmenu != DriversSubmenu.RETURN);
+		return driversSubmenu;
+	}
+
+	public DriversSubmenu driverAction(DriversSubmenu driversSubmenu) {
+		boolean changeDriverSubmenu = false;
+		do {
+
+			switch (driversSubmenu) {
+			case GETDELIVERIES:
+			LOGGER.info("Deliveries woo!");
+			break;
+			case UNDELIVERED:
+			LOGGER.info("Undelivered sadge!");
+				break;
+			case MARKCOMPLETE:
+			LOGGER.info("Mark Complete woo!");
+				break;
+			case RETURN:
+				break;
+			default:
+				break;
+			}
+
+			if (driversSubmenu == DriversSubmenu.RETURN) {
+				changeDriverSubmenu = true;
+			}
+			else{
+				LOGGER.info("What would you like to do?");
+				DriversSubmenu.printDomains();
+
+				driversSubmenu = DriversSubmenu.getDomain(utils);
+
+				driversSubmenu = driverAction(driversSubmenu);
+			}
+		} while (!changeDriverSubmenu);
+		return driversSubmenu;
+	}
+
+
+
 
 
 		
