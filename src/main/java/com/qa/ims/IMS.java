@@ -7,6 +7,7 @@ import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
 import com.qa.ims.controller.Action;
 import com.qa.ims.controller.CrudController;
 import com.qa.ims.controller.CustomerController;
+import com.qa.ims.controller.DriverController;
 import com.qa.ims.persistence.domain.Domain;
 import com.qa.ims.controller.Sections;
 import com.qa.ims.controller.ItemController;
@@ -24,6 +25,7 @@ public class IMS {
 	private final ItemController items;
 	private final OrderController orders;
 	private final ItemOrderController itemOrders;
+	private final DriverController drivers;
 	private final Utils utils;
 
 	public IMS() {
@@ -32,11 +34,13 @@ public class IMS {
 		final OrderDAO ordDAO = new OrderDAO();
 		final ItemDAO itemDAO = new ItemDAO();
 		final ItemOrderDAO itemOrderDAO = new ItemOrderDAO();
+		final DriverDAO driversDAO = new DriverDAO();
 
 		this.customers = new CustomerController(custDAO, utils);
 		this.items = new ItemController(itemDAO, utils);
 		this.orders = new OrderController(ordDAO, utils, itemDAO, itemOrderDAO);
 		this.itemOrders = new ItemOrderController(itemOrderDAO, utils);
+		this.drivers = new DriverController(driversDAO, utils);
 	}
 	public void sectionSystems() {
 		LOGGER.info("Welcome to the Delivery Management System!");
@@ -120,6 +124,12 @@ public class IMS {
 				break;
 			case ITEMORDER:
 				active = this.itemOrders;
+				break;
+			case DRIVERS:
+				active = this.drivers;
+				break;
+			case WAREHOUSE:
+				LOGGER.info("WAREHOUSE");
 				break;
 			case STOP:
 				return;
