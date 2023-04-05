@@ -2,8 +2,12 @@ package com.qa.ims.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.SystemPropertiesPropertySource;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
 import com.qa.ims.utils.Utils;
+
+import com.qa.ims.controller.OrderController;
 
 /**
  * Action is a collection of commands which are used to determine the type of
@@ -13,7 +17,7 @@ import com.qa.ims.utils.Utils;
 public enum Action {
 	CREATE("To save a new entity into the database"), READ("To read an entity from the database"),
 	UPDATE("To change an entity already in the database"), DELETE("To remove an entity from the database"),
-	RETURN("To return to domain selection");
+	CALCULATE("To calculate the cost of an order"), RETURN("To return to domain selection");
 
 	public static final Logger LOGGER = LogManager.getLogger();
 
@@ -36,6 +40,21 @@ public enum Action {
 	public static void printActions() {
 		for (Action action : Action.values()) {
 			LOGGER.info(action.getDescription());
+		}
+	}
+
+	public static void printActions(CrudController<?> controller) {
+		for (Action action : Action.values()) {
+			if(action == CALCULATE){
+				if(controller.getClass().equals(OrderController.class))
+				{
+					LOGGER.info(action.getDescription());
+				}
+			}
+			else
+			{
+				LOGGER.info(action.getDescription());
+			}
 		}
 	}
 

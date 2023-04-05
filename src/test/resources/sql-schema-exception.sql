@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS `itemorders`;
+
+DROP TABLE IF EXISTS `orders`;
+
+DROP TABLE IF EXISTS `items`;
+
+DROP TABLE IF EXISTS `customers`;
