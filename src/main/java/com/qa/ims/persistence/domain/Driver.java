@@ -7,7 +7,7 @@ public class Driver {
 	private Long id;
 	private String firstName;
 	private String surname;
-	private ArrayList<Delivery> deliveries;
+	private ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
 	public Long getId() {
 		return id;
 	}
