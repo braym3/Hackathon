@@ -7,11 +7,13 @@ import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
 import com.qa.ims.controller.Action;
 import com.qa.ims.controller.CrudController;
 import com.qa.ims.controller.CustomerController;
+import com.qa.ims.controller.DriverController;
+import com.qa.ims.persistence.domain.Domain;
+import com.qa.ims.controller.Sections;
 import com.qa.ims.controller.ItemController;
 import com.qa.ims.controller.ItemOrderController;
 import com.qa.ims.controller.OrderController;
 import com.qa.ims.persistence.dao.*;
-import com.qa.ims.persistence.domain.Domain;
 import com.qa.ims.utils.DBUtils;
 import com.qa.ims.utils.Utils;
 
@@ -23,6 +25,7 @@ public class IMS {
 	private final ItemController items;
 	private final OrderController orders;
 	private final ItemOrderController itemOrders;
+	private final DriverController drivers;
 	private final Utils utils;
 
 	public IMS() {
@@ -31,18 +34,67 @@ public class IMS {
 		final OrderDAO ordDAO = new OrderDAO();
 		final ItemDAO itemDAO = new ItemDAO();
 		final ItemOrderDAO itemOrderDAO = new ItemOrderDAO();
+		final DriverDAO driversDAO = new DriverDAO();
 
 		this.customers = new CustomerController(custDAO, utils);
 		this.items = new ItemController(itemDAO, utils);
 		this.orders = new OrderController(ordDAO, utils, itemDAO, itemOrderDAO);
 		this.itemOrders = new ItemOrderController(itemOrderDAO, utils);
+		this.drivers = new DriverController(driversDAO, utils);
 	}
-	
-	public void imsSystem() {
-		LOGGER.info("Welcome to the Inventory Management System!");
+	public void sectionSystems() {
+		LOGGER.info("Welcome to the Delivery Management System!");
 		DBUtils.connect();
 
+		Sections section = null;
+		do {
+			LOGGER.info("Which section would you like to use?");
+			Sections.printDomains();
+
+			section = Sections.getDomain(utils);
+
+			sectionAction(section);
+
+		} while (section != Sections.STOP);
+	}
+	private void sectionAction(Sections section) {
+		boolean changeSection = false;
 		Domain domain = null;
+		do {
+
+			switch (section) {
+			case DRIVERS:
+				LOGGER.info("I'm a Driver");
+				return;
+			case MANAGERS:
+				LOGGER.info("I'm a Manager");
+				return;
+			case ADMIN:
+				domain = imsSystem(domain);
+				break;
+			case STOP:
+				return;
+			default:
+				break;
+			}
+
+			System.out.println(domain);
+
+			
+		// 	Action.printActions(active);
+		// 	Action action = Action.getAction(utils);
+
+			if (domain == Domain.STOP) {
+				changeSection = true;
+			}
+		} while (!changeSection);
+	}
+
+
+		
+	public Domain imsSystem(Domain domain) {
+		LOGGER.info("Welcome to the Item Management System!");
+
 		do {
 			LOGGER.info("Which entity would you like to use?");
 			Domain.printDomains();
@@ -52,6 +104,7 @@ public class IMS {
 			domainAction(domain);
 
 		} while (domain != Domain.STOP);
+		return domain;
 	}
 
 	private void domainAction(Domain domain) {
@@ -72,6 +125,12 @@ public class IMS {
 			case ITEMORDER:
 				active = this.itemOrders;
 				break;
+			case DRIVERS:
+				active = this.drivers;
+				break;
+			case WAREHOUSE:
+				LOGGER.info("WAREHOUSE");
+				break;
 			case STOP:
 				return;
 			default:
@@ -91,6 +150,7 @@ public class IMS {
 		} while (!changeDomain);
 	}
 
+	
 	public void doAction(CrudController<?> crudController, Action action) {
 		switch (action) {
 		case CREATE:
