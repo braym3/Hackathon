@@ -3,7 +3,7 @@ package com.qa.ims.persistence.domain;
 public class Order {
 
 	private Long id, customerId, driverId;
-	private Boolean delivered;
+	private Long delivered, warehouseId;
 
 	public Order(Long customerId) {
 		this.customerId = customerId;
@@ -13,11 +13,21 @@ public class Order {
 		this.id = id;
 		this.customerId = customerId;
 	}
+	
 
-	public Order(Long customerId, Long driverId, Boolean delivered) {
+	public Order(Long customerId, Long driverId, Long delivered, Long warehouseId) {
 		this.customerId = customerId;
 		this.driverId = driverId;
 		this.delivered = delivered;
+		this.warehouseId = warehouseId;
+	}
+
+	public Order(Long id, Long customerId, Long driverId, Long delivered, Long warehouseId) {
+		this.id = id;
+		this.customerId = customerId;
+		this.driverId = driverId;
+		this.delivered = delivered;
+		this.warehouseId = warehouseId;
 	}
 
 	public Long getDriverId() {
@@ -28,11 +38,11 @@ public class Order {
 		this.driverId = driverId;
 	}
 
-	public Boolean getDelivered() {
+	public Long getDelivered() {
 		return delivered;
 	}
 
-	public void setDelivered(Boolean delivered) {
+	public void setDelivered(Long delivered) {
 		this.delivered = delivered;
 	}
 
@@ -52,12 +62,20 @@ public class Order {
 		this.customerId = customerId;
 	}
 
+	public Long getWarehouseId() {
+		return warehouseId;
+	}
+
+	public void setWarehouseId(Long warehouseId) {
+		this.warehouseId = warehouseId;
+	}
+
 	
 
 	@Override
 	public String toString() {
 		return "Order [id=" + id + ", customerId=" + customerId + ", driverId=" + driverId + ", delivered=" + delivered
-				+ "]";
+				+ ", warehouseId=" + warehouseId + "]";
 	}
 
 	@Override
@@ -68,6 +86,7 @@ public class Order {
 		result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
 		result = prime * result + ((driverId == null) ? 0 : driverId.hashCode());
 		result = prime * result + ((delivered == null) ? 0 : delivered.hashCode());
+		result = prime * result + ((warehouseId == null) ? 0 : warehouseId.hashCode());
 		return result;
 	}
 
@@ -100,7 +119,14 @@ public class Order {
 				return false;
 		} else if (!delivered.equals(other.delivered))
 			return false;
+		if (warehouseId == null) {
+			if (other.warehouseId != null)
+				return false;
+		} else if (!warehouseId.equals(other.warehouseId))
+			return false;
 		return true;
 	}
+
+
 
 }
