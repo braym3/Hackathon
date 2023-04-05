@@ -11,8 +11,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.qa.ims.persistence.domain.Customer;
 import com.qa.ims.persistence.domain.Driver;
+import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.utils.DBUtils;
 
 public class DriverDAO implements Dao<Driver>{
@@ -20,7 +20,7 @@ public class DriverDAO implements Dao<Driver>{
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	/**
-	 * Creates a driver object, reads driver
+	 * Creates a driver object, reads driver to get list of driver's assigned orders
 	 * 
 	 * @param resultSet - result set from the driver table
 	 * 
@@ -32,23 +32,50 @@ public class DriverDAO implements Dao<Driver>{
 
 		return this.read(id);
 	}
+	
+	/**
+	 * Creates a driver object
+	 * 
+	 * @param driverRS - result set from the drivers table
+	 * @param ordersRS  - result set from the orders table - all orders assigned to that driver id
+	 * @return The Driver object modelled from the result sets
+	 */
+	public Driver modelFromResultSet(ResultSet driverRS, ResultSet ordersRS) throws SQLException {
+		Long id = driverRS.getLong("id");
+		String firstName = driverRS.getString("first_name");
+		String surname = driverRS.getString("surname");
+		Long driverWarehouseId = driverRS.getLong("warehouse_id");
+		ArrayList<Order> orders = new ArrayList<Order>();
+		Long orderId;
+		Long customerId;
+		Long delivered;
+		Long warehouseId;
+		while (ordersRS.next()) {
+			orderId = ordersRS.getLong("id");
+			customerId = ordersRS.getLong("customer_id");
+			delivered = ordersRS.getLong("delivered");
+			warehouseId = ordersRS.getLong("warehouse_id");
+			orders.add(new Order(orderId, customerId, id, delivered, warehouseId));
+		}
+		return new Driver(id, firstName, surname, driverWarehouseId, orders);
+	}
 
 
 	/**
-	 * Reads all customers from the database
+	 * Reads all drivers from the database
 	 * 
-	 * @return A list of customers
+	 * @return A list of drivers
 	 */
 	@Override
 	public List<Driver> readAll() {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				Statement statement = connection.createStatement();
 				ResultSet resultSet = statement.executeQuery("SELECT * FROM drivers");) {
-			List<Driver> customers = new ArrayList<>();
+			List<Driver> drivers = new ArrayList<>();
 			while (resultSet.next()) {
-				customers.add(modelFromResultSet(resultSet));
+				drivers.add(modelFromResultSet(resultSet));
 			}
-			return customers;
+			return drivers;
 		} catch (SQLException e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
@@ -96,9 +123,14 @@ public class DriverDAO implements Dao<Driver>{
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection.prepareStatement("SELECT * FROM drivers WHERE id = ?");) {
 			statement.setLong(1, id);
-			try (ResultSet resultSet = statement.executeQuery();) {
-				resultSet.next();
-				return modelFromResultSet(resultSet);
+			try (ResultSet driverResultSet = statement.executeQuery();) {
+				driverResultSet.next();
+				// Use the driver ID to find all orders assigned to that driver
+				PreparedStatement ordersStatement = connection.prepareStatement(
+						"SELECT orders.id, orders.customer_id, items.warehouse_id FROM orders JOIN drivers ON orders.driver_id = drivers.id WHERE orders.driver_id = ?");
+				ordersStatement.setLong(1, id);
+				ResultSet ordersResultSet = ordersStatement.executeQuery();
+				return modelFromResultSet(driverResultSet, ordersResultSet);
 			}
 		} catch (Exception e) {
 			LOGGER.debug(e);
@@ -118,7 +150,7 @@ public class DriverDAO implements Dao<Driver>{
 	public Driver update(Driver driver) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("UPDATE customers SET first_name = ?, surname = ?, warehouse_id = ? WHERE id = ?");) {
+						.prepareStatement("UPDATE drivers SET first_name = ?, surname = ?, warehouse_id = ? WHERE id = ?");) {
 			statement.setString(1, driver.getFirstName());
 			statement.setString(2, driver.getSurname());
 			statement.setLong(3, driver.getWarehouseID());

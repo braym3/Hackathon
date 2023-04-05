@@ -1,6 +1,7 @@
 package com.qa.ims.persistence.domain;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Driver {
 	
@@ -78,6 +79,32 @@ public class Driver {
 	public void setWarehouseID(Long warehouseID) {
 		this.warehouseID = warehouseID;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(firstName, id, orders, surname, warehouseID);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Driver other = (Driver) obj;
+		return Objects.equals(firstName, other.firstName) && Objects.equals(id, other.id)
+				&& Objects.equals(orders, other.orders) && Objects.equals(surname, other.surname)
+				&& Objects.equals(warehouseID, other.warehouseID);
+	}
+
+	@Override
+	public String toString() {
+		return "Driver [id=" + id + ", firstName=" + firstName + ", surname=" + surname + ", orders=" + orders
+				+ ", warehouseID=" + warehouseID + "]";
+	}
+	
 	
 	
 	

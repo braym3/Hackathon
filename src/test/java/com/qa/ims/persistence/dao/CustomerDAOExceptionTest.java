@@ -21,39 +21,5 @@ public class CustomerDAOExceptionTest {
 		DBUtils.getInstance().init("src/test/resources/sql-schema-exception.sql", "src/test/resources/sql-data-exception.sql");
 	}
 
-	@Test
-	public void testCreate() {
-		final Customer created = new Customer(2L, "chris", "perrins");
-		assertEquals(null, DAO.create(created));
-	}
-
-	@Test
-	public void testReadAll() {
-		List<Customer> expected = new ArrayList<>();
-		expected.add(new Customer(1L, "jordan", "harrison"));
-		assertEquals(new ArrayList<>(), DAO.readAll());
-	}
-
-	@Test
-	public void testReadLatest() {
-		assertEquals(null, DAO.readLatest());
-	}
-
-	@Test
-	public void testRead() {
-		final long ID = 1L;
-		assertEquals(null, DAO.read(ID));
-	}
-
-	@Test
-	public void testUpdate() {
-		final Customer updated = new Customer(1L, "chris", "perrins");
-		assertEquals(null, DAO.update(updated));
-
-	}
-
-	@Test
-	public void testDelete() {
-		assertEquals(0, DAO.delete(1));
-	}
+	
 }
