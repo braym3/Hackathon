@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `customers` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `first_name` VARCHAR(40) DEFAULT NULL,
     `surname` VARCHAR(40) DEFAULT NULL,
+    `postcode` VARCHAR(7) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -28,7 +29,6 @@ CREATE TABLE IF NOT EXISTS `items` (
 
 CREATE TABLE IF NOT EXISTS `orders` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `order_name` VARCHAR(40) DEFAULT NULL,
     `customer_id` INT(11) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON DELETE CASCADE
@@ -43,3 +43,19 @@ CREATE TABLE IF NOT EXISTS `itemorders`
     foreign key(`item_id`) references `items`(`id`) ON DELETE CASCADE,
 	foreign key(`order_id`) references `orders`(`id`) ON DELETE CASCADE
     );
+    
+    CREATE TABLE IF NOT EXISTS `drivers` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `first_name` VARCHAR(40) DEFAULT NULL,
+    `surname` VARCHAR(40) DEFAULT NULL,
+    `warehouse_id` INT(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY(`warehouse_id`) REFERENCES `warehouse`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `warehouses` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(40) DEFAULT NULL,
+    `postcode` VARCHAR(7) NOT NULL,
+    PRIMARY KEY (`id`)
+);
