@@ -78,9 +78,10 @@ public class DriverDAO implements Dao<Driver>{
 	public Driver create(Driver driver) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("INSERT INTO drivers(first_name, surname) VALUES (?, ?)");) {
+						.prepareStatement("INSERT INTO drivers(first_name, surname, warehouse_id) VALUES (?, ?, ?)");) {
 			statement.setString(1, driver.getFirstName());
 			statement.setString(2, driver.getSurname());
+			statement.setLong(3, driver.getWarehouseID());
 			statement.executeUpdate();
 			return readLatest();
 		} catch (Exception e) {
@@ -117,10 +118,11 @@ public class DriverDAO implements Dao<Driver>{
 	public Driver update(Driver driver) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("UPDATE customers SET first_name = ?, surname = ? WHERE id = ?");) {
+						.prepareStatement("UPDATE customers SET first_name = ?, surname = ?, warehouse_id = ? WHERE id = ?");) {
 			statement.setString(1, driver.getFirstName());
 			statement.setString(2, driver.getSurname());
-			statement.setLong(3, driver.getId());
+			statement.setLong(3, driver.getWarehouseID());
+			statement.setLong(4, driver.getId());
 			statement.executeUpdate();
 			return read(driver.getId());
 		} catch (Exception e) {
