@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS `ims`.`orders`;
 
 DROP TABLE IF EXISTS `ims`.`drivers`;
 
-DROP TABLE IF EXISTS `ims`.`warehouse`;
+DROP TABLE IF EXISTS `ims`.`warehouses`;
 
 DROP TABLE IF EXISTS `ims`.`items`;
 
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `items` (
     PRIMARY KEY (`id`)
 );
     
-CREATE TABLE IF NOT EXISTS `warehouse` (
+CREATE TABLE IF NOT EXISTS `warehouses` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(40) DEFAULT NULL,
     `postcode` VARCHAR(7) NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `drivers` (
     `surname` VARCHAR(40) DEFAULT NULL,
     `warehouse_id` INT(11) NOT NULL,
     PRIMARY KEY (`id`),
-    FOREIGN KEY(`warehouse_id`) REFERENCES `warehouse`(`id`) ON DELETE CASCADE
+    FOREIGN KEY(`warehouse_id`) REFERENCES `warehouses`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `orders` (
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
     PRIMARY KEY (`id`),
     FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`driver_id`) REFERENCES `drivers`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse`(`id`) ON DELETE CASCADE
+    FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses`(`id`) ON DELETE CASCADE
 );
 
 

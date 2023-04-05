@@ -10,6 +10,7 @@ import com.qa.ims.controller.CustomerController;
 import com.qa.ims.controller.DriverController;
 import com.qa.ims.persistence.domain.Domain;
 import com.qa.ims.controller.Sections;
+import com.qa.ims.controller.WarehouseController;
 import com.qa.ims.controller.ItemController;
 import com.qa.ims.controller.ItemOrderController;
 import com.qa.ims.controller.OrderController;
@@ -26,6 +27,7 @@ public class IMS {
 	private final OrderController orders;
 	private final ItemOrderController itemOrders;
 	private final DriverController drivers;
+	private final WarehouseController warehouses;
 	private final Utils utils;
 
 	public IMS() {
@@ -35,12 +37,14 @@ public class IMS {
 		final ItemDAO itemDAO = new ItemDAO();
 		final ItemOrderDAO itemOrderDAO = new ItemOrderDAO();
 		final DriverDAO driversDAO = new DriverDAO();
+		final WarehouseDAO warehouseDAO = new WarehouseDAO();
 
 		this.customers = new CustomerController(custDAO, utils);
 		this.items = new ItemController(itemDAO, utils);
 		this.orders = new OrderController(ordDAO, utils, itemDAO, itemOrderDAO);
 		this.itemOrders = new ItemOrderController(itemOrderDAO, utils);
 		this.drivers = new DriverController(driversDAO, utils);
+		this.warehouses = new WarehouseController(warehouseDAO, utils);
 	}
 	public void sectionSystems() {
 		LOGGER.info("Welcome to the Delivery Management System!");
@@ -129,7 +133,7 @@ public class IMS {
 				active = this.drivers;
 				break;
 			case WAREHOUSE:
-				LOGGER.info("WAREHOUSE");
+				active = this.warehouses;
 				break;
 			case STOP:
 				return;

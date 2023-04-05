@@ -138,6 +138,22 @@ public class DriverDAO implements Dao<Driver>{
 		}
 		return null;
 	}
+	
+	public List<Driver> readUnassignedDrivers() {
+		try (Connection connection = DBUtils.getInstance().getConnection();
+				Statement statement = connection.createStatement();
+				ResultSet resultSet = statement.executeQuery("SELECT * FROM drivers WHERE");) {
+			List<Driver> drivers = new ArrayList<>();
+			while (resultSet.next()) {
+				drivers.add(modelFromResultSet(resultSet));
+			}
+			return drivers;
+		} catch (SQLException e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		return new ArrayList<>();
+	}
 
 	/**
 	 * Updates a driver in the database
