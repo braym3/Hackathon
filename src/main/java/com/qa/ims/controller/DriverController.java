@@ -32,6 +32,25 @@ public class DriverController implements CrudController<Driver>{
 		}
 		return drivers;
 	}
+	
+	/**
+	 * Reads driver belonging to id to the logger and returns the driver object
+	 * 
+	 * @param id - takes in an id for a driver, the id field will be used to read
+	 *           that driver in the database
+	 */
+	public Driver read(Long id) {
+		Driver driver;
+		try {
+			driver = driverDAO.read(id);
+			return driver;
+		} catch (Exception e) {
+			LOGGER.info("No driver found with ID: " + id + ". Please try again");
+		}
+		return null;
+	}
+	
+	
 
 	/**
 	 * Creates a driver by taking in user input

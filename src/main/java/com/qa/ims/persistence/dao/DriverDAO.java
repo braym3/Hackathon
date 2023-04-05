@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qa.ims.persistence.domain.Driver;
+import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.utils.DBUtils;
 
 public class DriverDAO implements Dao<Driver>{
@@ -19,7 +20,7 @@ public class DriverDAO implements Dao<Driver>{
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	/**
-	 * Creates a driver object, reads driver
+	 * Creates a driver object, reads driver to get list of driver's assigned orders
 	 * 
 	 * @param resultSet - result set from the driver table
 	 * 
@@ -30,6 +31,33 @@ public class DriverDAO implements Dao<Driver>{
 		Long id = resultSet.getLong("id");
 
 		return this.read(id);
+	}
+	
+	/**
+	 * Creates a driver object
+	 * 
+	 * @param driverRS - result set from the drivers table
+	 * @param ordersRS  - result set from the orders table - all orders assigned to that driver id
+	 * @return The Driver object modelled from the result sets
+	 */
+	public Driver modelFromResultSet(ResultSet driverRS, ResultSet ordersRS) throws SQLException {
+		Long id = driverRS.getLong("id");
+		String firstName = driverRS.getString("first_name");
+		String surname = driverRS.getString("surname");
+		Long driverWarehouseId = driverRS.getLong("warehouse_id");
+		ArrayList<Order> orders = new ArrayList<Order>();
+		Long orderId;
+		Long customerId;
+		Long delivered;
+		Long warehouseId;
+		while (ordersRS.next()) {
+			orderId = ordersRS.getLong("id");
+			customerId = ordersRS.getLong("customer_id");
+			delivered = ordersRS.getLong("delivered");
+			warehouseId = ordersRS.getLong("warehouse_id");
+			orders.add(new Order(orderId, customerId, id, delivered, warehouseId));
+		}
+		return new Driver(id, firstName, surname, driverWarehouseId, orders);
 	}
 
 
@@ -95,9 +123,14 @@ public class DriverDAO implements Dao<Driver>{
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection.prepareStatement("SELECT * FROM drivers WHERE id = ?");) {
 			statement.setLong(1, id);
-			try (ResultSet resultSet = statement.executeQuery();) {
-				resultSet.next();
-				return modelFromResultSet(resultSet);
+			try (ResultSet driverResultSet = statement.executeQuery();) {
+				driverResultSet.next();
+				// Use the driver ID to find all orders assigned to that driver
+				PreparedStatement ordersStatement = connection.prepareStatement(
+						"SELECT orders.id, orders.customer_id, items.warehouse_id FROM orders JOIN drivers ON orders.driver_id = drivers.id WHERE orders.driver_id = ?");
+				ordersStatement.setLong(1, id);
+				ResultSet ordersResultSet = ordersStatement.executeQuery();
+				return modelFromResultSet(driverResultSet, ordersResultSet);
 			}
 		} catch (Exception e) {
 			LOGGER.debug(e);
