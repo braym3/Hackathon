@@ -1,21 +1,25 @@
 package com.qa.ims.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qa.ims.persistence.dao.DriverDAO;
+import com.qa.ims.persistence.dao.OrderDAO;
 import com.qa.ims.persistence.domain.Driver;
+import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.utils.Utils;
 
 public class DriverController implements CrudController<Driver>{
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	private DriverDAO driverDAO;
+	private OrderDAO orderDAO;
 	private Utils utils;
 
-	public DriverController(DriverDAO driverDAO, Utils utils) {
+	public DriverController(DriverDAO driverDAO, Utils utils, OrderDAO orderDAO) {
 		super();
 		this.driverDAO = driverDAO;
 		this.utils = utils;
@@ -108,5 +112,36 @@ public class DriverController implements CrudController<Driver>{
 		LOGGER.info("Please enter the id of the driver you would like to delete");
 		Long id = utils.getLong();
 		return driverDAO.delete(id);
+	}
+
+
+	public Driver markComplete()
+	{
+		LOGGER.info("Please enter your driver ID");
+		Long id = utils.getLong();
+		boolean driverFlag = false;
+		List<Order> orderList = driverDAO.read(id).getDeliveries();
+		List<Long> orderIdList = orderList.stream().map(m -> m.getId()).collect(Collectors.toList());
+		do{
+			LOGGER.info("Please enter the ID you wish to mark as delivered (-1 to exit):");
+			LOGGER.info(orderIdList);
+			Long orderId = utils.getLong();
+
+			if (orderIdList.contains(orderId))
+			{
+				orderDAO.update(orderList.stream()
+				.filter(m -> m.getId().equals(orderId)
+				).map(m -> new Order(m.getCustomerId(), m.getDriverId(), 1L, m.getWarehouseId()))
+				.findFirst().orElse(null)
+				);
+			}
+			else{
+				driverFlag = true;
+			}
+
+
+		}while(!driverFlag);
+
+		return null;
 	}
 }

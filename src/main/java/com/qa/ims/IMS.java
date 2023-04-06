@@ -44,7 +44,7 @@ public class IMS {
 		this.items = new ItemController(itemDAO, utils);
 		this.orders = new OrderController(ordDAO, utils, itemDAO, itemOrderDAO);
 		this.itemOrders = new ItemOrderController(itemOrderDAO, utils);
-		this.drivers = new DriverController(driversDAO, utils);
+		this.drivers = new DriverController(driversDAO, utils, ordDAO);
 		this.warehouses = new WarehouseController(warehouseDAO, utils);
 	}
 	public void sectionSystems() {
@@ -127,7 +127,7 @@ public class IMS {
 			LOGGER.info("Undelivered sadge!");
 				break;
 			case MARKCOMPLETE:
-			LOGGER.info("Mark Complete woo!");
+				drivers.markComplete();
 				break;
 			case RETURN:
 				break;
