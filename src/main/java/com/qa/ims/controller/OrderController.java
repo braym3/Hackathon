@@ -1,6 +1,7 @@
 package com.qa.ims.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -122,6 +123,43 @@ public class OrderController implements CrudController<Order> {
 		}
 		LOGGER.info("Total cost of Order " + id + " is " + total);
 		return total.intValue();
+
+	}
+
+	public void assignDriver()
+	{
+		Boolean orderFlag = false;
+		List<Order> orderList = this.readAll();
+
+		do{
+			LOGGER.info("Please enter the id of the order you would like to assign (-1 to exit, -2 to relist orders");
+			Long orderId = utils.getLong();
+			if (orderId == -1){
+				orderFlag = true;
+				break;
+			}
+			if (orderId == -2){
+				orderList = this.readAll();
+				continue;
+			}
+			LOGGER.info("Please enter the id of the driver you would like to assign to the order");
+			Long driverId = utils.getLong();
+
+			Order orderToUpdate = orderList.stream().filter(m -> m.getId().equals(orderId)).findFirst().orElse(null);
+			orderToUpdate.setDriverId(driverId);
+			if (orderToUpdate != null)
+			{
+				orderDAO.update(orderToUpdate);
+			}
+			else
+			{
+			LOGGER.info("Invalid Order Id");
+			}
+
+		}while (!orderFlag);
+
+
+
 
 	}
 
