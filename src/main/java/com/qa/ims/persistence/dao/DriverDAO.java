@@ -127,7 +127,7 @@ public class DriverDAO implements Dao<Driver>{
 				driverResultSet.next();
 				// Use the driver ID to find all orders assigned to that driver
 				PreparedStatement ordersStatement = connection.prepareStatement(
-						"SELECT orders.id, orders.customer_id, items.warehouse_id FROM orders JOIN drivers ON orders.driver_id = drivers.id WHERE orders.driver_id = ?");
+						"SELECT orders.id, orders.customer_id, orders.delivered, orders.warehouse_id FROM orders JOIN drivers ON orders.driver_id = drivers.id WHERE orders.driver_id = ?");
 				ordersStatement.setLong(1, id);
 				ResultSet ordersResultSet = ordersStatement.executeQuery();
 				return modelFromResultSet(driverResultSet, ordersResultSet);
