@@ -50,6 +50,17 @@ public class DriverController implements CrudController<Driver>{
 		return null;
 	}
 	
+	/**
+	 * Reads all drivers with no assigned orders to the logger
+	 */
+	public List<Driver> readUnassignedDrivers(){
+		List<Driver> unassignedDrivers = driverDAO.readAll();
+		for (Driver driver : unassignedDrivers) {
+			LOGGER.info(driver);
+		}
+		return unassignedDrivers;
+	}
+	
 	
 
 	/**
