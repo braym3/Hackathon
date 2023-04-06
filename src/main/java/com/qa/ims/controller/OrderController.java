@@ -55,6 +55,9 @@ public class OrderController implements CrudController<Order> {
 		for (Order order : orders) {
 			LOGGER.info(order);
 		}
+		if(orders.isEmpty()) {
+			LOGGER.info("There are no unassigned deliveries in this warehouse");
+		}
 		return orders;
 	}
 	

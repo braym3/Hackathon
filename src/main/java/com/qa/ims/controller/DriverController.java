@@ -97,6 +97,9 @@ public class DriverController implements CrudController<Driver>{
 					LOGGER.info(order);
 				}
 			}
+			if(driver.getDeliveries().isEmpty()) {
+				LOGGER.info("You have no undelivered orders");
+			}
 			return driver.getDeliveries();
 		} catch (Exception e) {
 			LOGGER.debug(e);
