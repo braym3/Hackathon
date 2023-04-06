@@ -1,5 +1,7 @@
-INSERT INTO `ims`.`customers` (`first_name`, `surname`) VALUES ('jordan', 'harrison');
-INSERT INTO `customers` (`first_name`, `surname`) VALUES ('jordan', 'harrison');
-INSERT INTO `items` (`item_name`, `item_value`) VALUES ('test_item', 2552);
-INSERT INTO `orders` (`order_name`, `customer_id`) VALUES ('order_name', 1);
-INSERT INTO `itemorders` (`item_id`, `order_id`, `orderquant`) VALUES (1 , 1, 6590);
+INSERT INTO `ims`.`warehouse` (`name`, `postcode`) VALUES ("warehouse1", "LA1 3JT");
+
+INSERT INTO `ims`.`drivers` (`first_name`, `surname`, `warehouse_id`) VALUES ("bob", "smith", 1), ("jane", "birch", 1), ("peter", "piper", 1);
+
+INSERT INTO `ims`.`customers` (`first_name`, `surname`, `postcode`) VALUES ("sarah", "brown", "LA1 6YZ");
+
+INSERT INTO `ims`.`orders` (`customer_id`, `driver_id`, `delivered`, `warehouse_id`) VALUES (1, 3, 1, 1);
