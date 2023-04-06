@@ -118,6 +118,11 @@ public class DriverDAO implements Dao<Driver>{
 		return null;
 	}
 
+	/**
+	 * Reads the driver in the database with the given id
+	 * 
+	 * @param id - takes in a driver id
+	 */
 	@Override
 	public Driver read(Long id) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
@@ -127,7 +132,7 @@ public class DriverDAO implements Dao<Driver>{
 				driverResultSet.next();
 				// Use the driver ID to find all orders assigned to that driver
 				PreparedStatement ordersStatement = connection.prepareStatement(
-						"SELECT orders.id, orders.customer_id, items.warehouse_id FROM orders JOIN drivers ON orders.driver_id = drivers.id WHERE orders.driver_id = ?");
+						"SELECT orders.id, orders.customer_id, orders.delivered, orders.warehouse_id FROM orders JOIN drivers ON orders.driver_id = drivers.id WHERE orders.driver_id = ?");
 				ordersStatement.setLong(1, id);
 				ResultSet ordersResultSet = ordersStatement.executeQuery();
 				return modelFromResultSet(driverResultSet, ordersResultSet);
@@ -138,6 +143,29 @@ public class DriverDAO implements Dao<Driver>{
 		}
 		return null;
 	}
+	
+	/**
+	 * Reads all drivers from the database with no assigned orders
+	 * 
+	 */
+	public List<Driver> readUnassignedDrivers() {
+		try (Connection connection = DBUtils.getInstance().getConnection();
+				Statement statement = connection.createStatement();
+				ResultSet resultSet = statement.executeQuery("SELECT `drivers`.`id` FROM `ims`.`drivers` LEFT JOIN `ims`.`orders` ON `drivers`.`id` = `orders`.`driver_id`WHERE `orders`.`id` IS NULL;");) {
+			List<Driver> drivers = new ArrayList<>();
+			while (resultSet.next()) {
+				drivers.add(modelFromResultSet(resultSet));
+			}
+			return drivers;
+		} catch (SQLException e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		return new ArrayList<>();
+	}
+
+	
+	
 
 	/**
 	 * Updates a driver in the database
