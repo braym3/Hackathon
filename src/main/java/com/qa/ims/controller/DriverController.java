@@ -56,7 +56,6 @@ public class DriverController implements CrudController<Driver>{
 	/**
 	 * Reads orders belonging to the driver id to the logger and returns the driver object
 	 * 
-	 * 
 	 */
 	public List<Order> readDriverOrders(){
 		LOGGER.info("Please enter a driver ID");
@@ -70,6 +69,29 @@ public class DriverController implements CrudController<Driver>{
 			return driver.getDeliveries();
 		} catch (Exception e) {
 			LOGGER.info("No driver found with ID: " + id + ". Please try again");
+		}
+		return null;
+		
+	}
+	
+	/**
+	 * Reads all undelivered orders belonging to the driver id to the logger and returns the driver object
+	 * 
+	 */
+	public List<Order> readUndeliveredOrders(){
+		LOGGER.info("Please enter a driver ID");
+		Long id = utils.getLong();
+		Driver driver;
+		try {
+			driver = driverDAO.read(id);
+			for(Order order : driver.getDeliveries()) {
+				if(order.getDelivered() == 0) {
+					LOGGER.info(order);
+				}
+			}
+			return driver.getDeliveries();
+		} catch (Exception e) {
+			LOGGER.debug(e);
 		}
 		return null;
 		
