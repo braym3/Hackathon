@@ -1,6 +1,7 @@
 package com.qa.ims.controller;
 
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,7 @@ public class DriverController implements CrudController<Driver>{
 		super();
 		this.driverDAO = driverDAO;
 		this.utils = utils;
+		this.orderDAO = orderDAO;
 	}
 
 	/**
@@ -166,8 +168,14 @@ public class DriverController implements CrudController<Driver>{
 		Long id = utils.getLong();
 		boolean driverFlag = false;
 		List<Order> orderList = driverDAO.read(id).getDeliveries();
-		List<Long> orderIdList = orderList.stream().map(m -> m.getId()).collect(Collectors.toList());
+		List<Long> orderIdList = orderList.stream().filter(m -> m.getDelivered().equals(0l)).map(m -> m.getId()).collect(Collectors.toList());
 		do{
+			if(orderIdList.size() == 0)
+			{
+				LOGGER.info("All orders delivered");
+				driverFlag = true;
+				break;
+			}
 			LOGGER.info("Please enter the ID you wish to mark as delivered (-1 to exit):");
 			LOGGER.info(orderIdList);
 			Long orderId = utils.getLong();
@@ -176,9 +184,21 @@ public class DriverController implements CrudController<Driver>{
 			{
 				orderDAO.update(orderList.stream()
 				.filter(m -> m.getId().equals(orderId)
-				).map(m -> new Order(m.getCustomerId(), m.getDriverId(), 1L, m.getWarehouseId()))
-				.findFirst().orElse(null)
+				).map(m -> new Order(orderId, m.getCustomerId(), m.getDriverId(), 1L, m.getWarehouseId()))
+				.findAny().orElse(null)
 				);
+
+				LOGGER.info("Marked order " + orderId + " as delivered");
+
+
+				orderIdList.remove(orderId);
+
+				if(orderIdList.size() == 0)
+				{
+					LOGGER.info("No more orders to mark as delivered");
+					driverFlag = true;
+				}
+				
 			}
 			else{
 				driverFlag = true;
