@@ -121,10 +121,10 @@ public class IMS {
 
 			switch (driversSubmenu) {
 			case GETDELIVERIES:
-			LOGGER.info("Deliveries woo!");
-			break;
+				drivers.readDriverOrders();
+				break;
 			case UNDELIVERED:
-			LOGGER.info("Undelivered sadge!");
+				drivers.readUndeliveredOrders();
 				break;
 			case MARKCOMPLETE:
 				drivers.markComplete();
