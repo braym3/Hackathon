@@ -14,6 +14,7 @@ import com.qa.ims.controller.Sections;
 import com.qa.ims.controller.WarehouseController;
 import com.qa.ims.controller.ItemController;
 import com.qa.ims.controller.ItemOrderController;
+import com.qa.ims.controller.ManagerSubmenu;
 import com.qa.ims.controller.OrderController;
 import com.qa.ims.persistence.dao.*;
 import com.qa.ims.utils.DBUtils;
@@ -66,6 +67,7 @@ public class IMS {
 		boolean changeSection = false;
 		Domain domain = null;
 		DriversSubmenu driversSubmenu = null;
+		ManagerSubmenu managersSubmenu = null;
 		do {
 
 			switch (section) {
@@ -73,7 +75,7 @@ public class IMS {
 				driversSubmenu = driverSystem(driversSubmenu);
 				return;
 			case MANAGERS:
-				LOGGER.info("I'm a Manager");
+				managersSubmenu = managerSystem(managersSubmenu);	
 				return;
 			case ADMIN:
 				domain = imsSystem(domain);
@@ -94,6 +96,9 @@ public class IMS {
 				changeSection = true;
 			}
 			if (driversSubmenu == DriversSubmenu.RETURN) {
+				changeSection = true;
+			}
+			if (managersSubmenu == ManagerSubmenu.RETURN) {
 				changeSection = true;
 			}
 		} while (!changeSection);
@@ -150,9 +155,59 @@ public class IMS {
 		return driversSubmenu;
 	}
 
+	public ManagerSubmenu managerSystem(ManagerSubmenu managersSubmenu) {
+		LOGGER.info("Welcome to the Management System!");
+
+		do {
+			LOGGER.info("What would you like to do?");
+			ManagerSubmenu.printDomains();
+
+			managersSubmenu = ManagerSubmenu.getDomain(utils);
+
+			managersSubmenu = managerAction(managersSubmenu);
 
 
+		} while (managersSubmenu != ManagerSubmenu.RETURN);
+		return managersSubmenu;
+	}
 
+	public ManagerSubmenu managerAction(ManagerSubmenu managersSubmenu) {
+		boolean changeManagerSubmenu = false;
+		do {
+
+			switch (managersSubmenu) {
+			case ASSIGNDELIVERY:
+				LOGGER.info("ASSIGN DELIVERY");
+				break;
+			case WAREHOUSE:
+				LOGGER.info("WAREHOUSE");
+				break;
+			case NODELIVERY:
+				LOGGER.info("NODELIVERY");
+				break;
+			case NODRIVER:
+				LOGGER.info("NODRIVER");
+				break;
+			case RETURN:
+				break;
+			default:
+				break;
+			}
+
+			if (managersSubmenu == ManagerSubmenu.RETURN) {
+				changeManagerSubmenu = true;
+			}
+			else{
+				LOGGER.info("What would you like to do?");
+				ManagerSubmenu.printDomains();
+				
+				managersSubmenu = ManagerSubmenu.getDomain(utils);
+
+				managersSubmenu = managerAction(managersSubmenu);
+			}
+		} while (!changeManagerSubmenu);
+		return managersSubmenu;
+	}
 
 		
 	public Domain imsSystem(Domain domain) {
