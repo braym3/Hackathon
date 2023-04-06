@@ -118,6 +118,11 @@ public class DriverDAO implements Dao<Driver>{
 		return null;
 	}
 
+	/**
+	 * Reads the driver in the database with the given id
+	 * 
+	 * @param id - takes in a driver id
+	 */
 	@Override
 	public Driver read(Long id) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
@@ -139,6 +144,10 @@ public class DriverDAO implements Dao<Driver>{
 		return null;
 	}
 	
+	/**
+	 * Reads all drivers from the database with no assigned orders
+	 * 
+	 */
 	public List<Driver> readUnassignedDrivers() {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				Statement statement = connection.createStatement();
@@ -154,6 +163,9 @@ public class DriverDAO implements Dao<Driver>{
 		}
 		return new ArrayList<>();
 	}
+
+	
+	
 
 	/**
 	 * Updates a driver in the database
