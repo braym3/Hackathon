@@ -44,6 +44,20 @@ public class OrderController implements CrudController<Order> {
 		}
 		return orders;
 	}
+	
+	/**
+	 * Reads all orders with no assigned drivers from the given warehouse id to the logger
+	 */
+	public List<Order> readUnassigned() {
+		LOGGER.info("Please enter a warehouse ID");
+		Long id = utils.getLong();
+		List<Order> orders = orderDAO.readUnassigned(id);
+		for (Order order : orders) {
+			LOGGER.info(order);
+		}
+		return orders;
+	}
+	
 
 	/**
 	 * Creates an order by taking in user input
