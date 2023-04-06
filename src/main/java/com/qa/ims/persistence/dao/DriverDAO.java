@@ -163,6 +163,27 @@ public class DriverDAO implements Dao<Driver>{
 		}
 		return new ArrayList<>();
 	}
+	
+	/**
+	 * Reads all drivers from the database with the corresponding warehouse id
+	 * 
+	 */
+	public List<Driver> readWarehouseDrivers(Long warehouseId) {
+		try (Connection connection = DBUtils.getInstance().getConnection();
+				PreparedStatement statement = connection.prepareStatement("SELECT * FROM drivers WHERE warehouse_id = ?");) {
+			statement.setLong(1, warehouseId);
+			List<Driver> drivers = new ArrayList<>();
+			ResultSet resultSet = statement.executeQuery();
+				while (resultSet.next()) {
+					drivers.add(modelFromResultSet(resultSet));
+				}
+				return drivers;
+		} catch (Exception e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+			return new ArrayList<>();
+	}
 
 	
 	

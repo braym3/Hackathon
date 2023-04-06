@@ -98,6 +98,20 @@ public class DriverController implements CrudController<Driver>{
 	}
 	
 	/**
+	 * Reads all drivers assigned to a warehouse ID
+	 * 
+	 */
+	public List<Driver> readWarehouseDrivers(){
+		LOGGER.info("Please enter a warehouse ID");
+		Long id = utils.getLong();
+		List<Driver> drivers = driverDAO.readWarehouseDrivers(id);
+		for (Driver driver : drivers) {
+			LOGGER.info(driver);
+		}
+		return drivers;
+	}
+	
+	/**
 	 * Reads all drivers with no assigned orders to the logger
 	 */
 	public List<Driver> readUnassignedDrivers(){
