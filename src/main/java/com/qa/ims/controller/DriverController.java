@@ -36,10 +36,11 @@ public class DriverController implements CrudController<Driver>{
 	/**
 	 * Reads driver belonging to id to the logger and returns the driver object
 	 * 
-	 * @param id - takes in an id for a driver, the id field will be used to read
-	 *           that driver in the database
+	 * 
 	 */
-	public Driver read(Long id) {
+	public Driver read() {
+		LOGGER.info("Please enter a driver ID");
+		Long id = utils.getLong();
 		Driver driver;
 		try {
 			driver = driverDAO.read(id);
@@ -48,6 +49,17 @@ public class DriverController implements CrudController<Driver>{
 			LOGGER.info("No driver found with ID: " + id + ". Please try again");
 		}
 		return null;
+	}
+	
+	/**
+	 * Reads all drivers with no assigned orders to the logger
+	 */
+	public List<Driver> readUnassignedDrivers(){
+		List<Driver> unassignedDrivers = driverDAO.readAll();
+		for (Driver driver : unassignedDrivers) {
+			LOGGER.info(driver);
+		}
+		return unassignedDrivers;
 	}
 	
 	
