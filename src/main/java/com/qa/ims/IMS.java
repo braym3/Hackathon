@@ -177,7 +177,7 @@ public class IMS {
 
 			switch (managersSubmenu) {
 			case ASSIGNDELIVERY:
-				LOGGER.info("ASSIGN DELIVERY");
+				orders.assignDriver();
 				break;
 			case WAREHOUSE:
 				drivers.readWarehouseDrivers();

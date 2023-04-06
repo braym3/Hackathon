@@ -204,8 +204,8 @@ public class DriverController implements CrudController<Driver>{
 
 				LOGGER.info("Marked order " + orderId + " as delivered");
 
+				orderIdList = orderIdList.stream().filter(m -> m != orderId).collect(Collectors.toList());
 
-				orderIdList.remove(orderId);
 
 				if(orderIdList.size() == 0)
 				{
