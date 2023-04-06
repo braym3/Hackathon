@@ -7,7 +7,7 @@ import com.qa.ims.utils.Utils;
 
 public enum Sections {
 
-	DRIVERS("Information about drivers"), MANAGERS("Information about Managers"), ADMIN("Information about Orders and Items"),
+	DRIVERS("Information for drivers"), MANAGERS("Information for Managers"), ADMIN("Information about Orders and Items"),
 	STOP("To close the application");
 
 	public static final Logger LOGGER = LogManager.getLogger();

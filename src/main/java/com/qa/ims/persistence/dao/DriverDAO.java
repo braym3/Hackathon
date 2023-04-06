@@ -142,7 +142,7 @@ public class DriverDAO implements Dao<Driver>{
 	public List<Driver> readUnassignedDrivers() {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT * FROM drivers WHERE");) {
+				ResultSet resultSet = statement.executeQuery("SELECT `drivers`.`id` FROM `ims`.`drivers` LEFT JOIN `ims`.`orders` ON `drivers`.`id` = `orders`.`driver_id`WHERE `orders`.`id` IS NULL;");) {
 			List<Driver> drivers = new ArrayList<>();
 			while (resultSet.next()) {
 				drivers.add(modelFromResultSet(resultSet));
