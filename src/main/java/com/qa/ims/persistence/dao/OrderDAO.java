@@ -50,6 +50,23 @@ public class OrderDAO implements Dao<Order> {
 		}
 		return new ArrayList<>();
 	}
+	
+	public List<Order> readUnassigned(Long warehouseId){
+		try (Connection connection = DBUtils.getInstance().getConnection();){
+			PreparedStatement statement = connection.prepareStatement("SELECT * FROM orders WHERE warehouse_id = ? AND driver_id IS NULL;");
+			statement.setLong(1,warehouseId);
+			ResultSet resultSet = statement.executeQuery();
+			List<Order> orders = new ArrayList<>();
+			while (resultSet.next()) {
+				orders.add(modelFromResultSet(resultSet));
+			}
+			return orders;
+		} catch (SQLException e) {
+			LOGGER.debug(e);
+			LOGGER.error(e.getMessage());
+		}
+		return new ArrayList<>();
+	}
 
 	public Order readLatest() {
 		try (Connection connection = DBUtils.getInstance().getConnection();

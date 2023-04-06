@@ -180,13 +180,13 @@ public class IMS {
 				LOGGER.info("ASSIGN DELIVERY");
 				break;
 			case WAREHOUSE:
-				LOGGER.info("WAREHOUSE");
+				drivers.readWarehouseDrivers();
 				break;
 			case NODELIVERY:
-				LOGGER.info("NODELIVERY");
+				drivers.readUnassignedDrivers();
 				break;
 			case NODRIVER:
-				LOGGER.info("NODRIVER");
+				orders.readUnassigned();
 				break;
 			case RETURN:
 				break;
