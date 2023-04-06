@@ -74,7 +74,7 @@ public class CustomerDAO implements Dao<Customer> {
 						.prepareStatement("INSERT INTO customers(first_name, surname, postcode) VALUES (?, ?, ?)");) {
 			statement.setString(1, customer.getFirstName());
 			statement.setString(2, customer.getSurname());
-			statement.setString(2, customer.getPostcode());
+			statement.setString(3, customer.getPostcode());
 			statement.executeUpdate();
 			return readLatest();
 		} catch (Exception e) {
