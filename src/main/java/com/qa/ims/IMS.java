@@ -3,11 +3,20 @@ package com.qa.ims;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
 import com.qa.ims.controller.Action;
 import com.qa.ims.controller.CrudController;
 import com.qa.ims.controller.CustomerController;
-import com.qa.ims.persistence.dao.CustomerDAO;
+import com.qa.ims.controller.DriverController;
+import com.qa.ims.controller.DriversSubmenu;
 import com.qa.ims.persistence.domain.Domain;
+import com.qa.ims.controller.Sections;
+import com.qa.ims.controller.WarehouseController;
+import com.qa.ims.controller.ItemController;
+import com.qa.ims.controller.ItemOrderController;
+import com.qa.ims.controller.ManagerSubmenu;
+import com.qa.ims.controller.OrderController;
+import com.qa.ims.persistence.dao.*;
 import com.qa.ims.utils.DBUtils;
 import com.qa.ims.utils.Utils;
 
@@ -16,19 +25,194 @@ public class IMS {
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	private final CustomerController customers;
+	private final ItemController items;
+	private final OrderController orders;
+	private final ItemOrderController itemOrders;
+	private final DriverController drivers;
+	private final WarehouseController warehouses;
 	private final Utils utils;
 
 	public IMS() {
 		this.utils = new Utils();
 		final CustomerDAO custDAO = new CustomerDAO();
-		this.customers = new CustomerController(custDAO, utils);
-	}
+		final OrderDAO ordDAO = new OrderDAO();
+		final ItemDAO itemDAO = new ItemDAO();
+		final ItemOrderDAO itemOrderDAO = new ItemOrderDAO();
+		final DriverDAO driversDAO = new DriverDAO();
+		final WarehouseDAO warehouseDAO = new WarehouseDAO();
 
-	public void imsSystem() {
-		LOGGER.info("Welcome to the Inventory Management System!");
+		this.customers = new CustomerController(custDAO, utils);
+		this.items = new ItemController(itemDAO, utils);
+		this.orders = new OrderController(ordDAO, utils, itemDAO, itemOrderDAO);
+		this.itemOrders = new ItemOrderController(itemOrderDAO, utils);
+		this.drivers = new DriverController(driversDAO, utils, ordDAO);
+		this.warehouses = new WarehouseController(warehouseDAO, utils);
+	}
+	public void sectionSystems() {
+		LOGGER.info("Welcome to the Delivery Management System!");
 		DBUtils.connect();
 
+		Sections section = null;
+		do {
+			LOGGER.info("Which section would you like to use?");
+			Sections.printDomains();
+
+			section = Sections.getDomain(utils);
+
+			sectionAction(section);
+
+		} while (section != Sections.STOP);
+	}
+	private void sectionAction(Sections section) {
+		boolean changeSection = false;
 		Domain domain = null;
+		DriversSubmenu driversSubmenu = null;
+		ManagerSubmenu managersSubmenu = null;
+		do {
+
+			switch (section) {
+			case DRIVERS:
+				driversSubmenu = driverSystem(driversSubmenu);
+				return;
+			case MANAGERS:
+				managersSubmenu = managerSystem(managersSubmenu);	
+				return;
+			case ADMIN:
+				domain = imsSystem(domain);
+				break;
+			case STOP:
+				return;
+			default:
+				break;
+			}
+
+			System.out.println(domain);
+
+			
+		// 	Action.printActions(active);
+		// 	Action action = Action.getAction(utils);
+
+			if (domain == Domain.STOP) {
+				changeSection = true;
+			}
+			if (driversSubmenu == DriversSubmenu.RETURN) {
+				changeSection = true;
+			}
+			if (managersSubmenu == ManagerSubmenu.RETURN) {
+				changeSection = true;
+			}
+		} while (!changeSection);
+	}
+
+	public DriversSubmenu driverSystem(DriversSubmenu driversSubmenu) {
+		LOGGER.info("Welcome to the Driver Management System!");
+
+		do {
+			LOGGER.info("What would you like to do?");
+			DriversSubmenu.printDomains();
+
+			driversSubmenu = DriversSubmenu.getDomain(utils);
+
+			driversSubmenu = driverAction(driversSubmenu);
+
+
+		} while (driversSubmenu != DriversSubmenu.RETURN);
+		return driversSubmenu;
+	}
+
+	public DriversSubmenu driverAction(DriversSubmenu driversSubmenu) {
+		boolean changeDriverSubmenu = false;
+		do {
+
+			switch (driversSubmenu) {
+			case GETDELIVERIES:
+				drivers.readDriverOrders();
+				break;
+			case UNDELIVERED:
+				drivers.readUndeliveredOrders();
+				break;
+			case MARKCOMPLETE:
+				drivers.markComplete();
+				break;
+			case RETURN:
+				break;
+			default:
+				break;
+			}
+
+			if (driversSubmenu == DriversSubmenu.RETURN) {
+				changeDriverSubmenu = true;
+			}
+			else{
+				LOGGER.info("What would you like to do?");
+				DriversSubmenu.printDomains();
+
+				driversSubmenu = DriversSubmenu.getDomain(utils);
+
+				driversSubmenu = driverAction(driversSubmenu);
+			}
+		} while (!changeDriverSubmenu);
+		return driversSubmenu;
+	}
+
+	public ManagerSubmenu managerSystem(ManagerSubmenu managersSubmenu) {
+		LOGGER.info("Welcome to the Management System!");
+
+		do {
+			LOGGER.info("What would you like to do?");
+			ManagerSubmenu.printDomains();
+
+			managersSubmenu = ManagerSubmenu.getDomain(utils);
+
+			managersSubmenu = managerAction(managersSubmenu);
+
+
+		} while (managersSubmenu != ManagerSubmenu.RETURN);
+		return managersSubmenu;
+	}
+
+	public ManagerSubmenu managerAction(ManagerSubmenu managersSubmenu) {
+		boolean changeManagerSubmenu = false;
+		do {
+
+			switch (managersSubmenu) {
+			case ASSIGNDELIVERY:
+				orders.assignDriver();
+				break;
+			case WAREHOUSE:
+				drivers.readWarehouseDrivers();
+				break;
+			case NODELIVERY:
+				drivers.readUnassignedDrivers();
+				break;
+			case NODRIVER:
+				orders.readUnassigned();
+				break;
+			case RETURN:
+				break;
+			default:
+				break;
+			}
+
+			if (managersSubmenu == ManagerSubmenu.RETURN) {
+				changeManagerSubmenu = true;
+			}
+			else{
+				LOGGER.info("What would you like to do?");
+				ManagerSubmenu.printDomains();
+				
+				managersSubmenu = ManagerSubmenu.getDomain(utils);
+
+				managersSubmenu = managerAction(managersSubmenu);
+			}
+		} while (!changeManagerSubmenu);
+		return managersSubmenu;
+	}
+
+		
+	public Domain imsSystem(Domain domain) {
+		LOGGER.info("Welcome to the Item Management System!");
+
 		do {
 			LOGGER.info("Which entity would you like to use?");
 			Domain.printDomains();
@@ -38,6 +222,7 @@ public class IMS {
 			domainAction(domain);
 
 		} while (domain != Domain.STOP);
+		return domain;
 	}
 
 	private void domainAction(Domain domain) {
@@ -50,8 +235,19 @@ public class IMS {
 				active = this.customers;
 				break;
 			case ITEM:
+				active = this.items;
 				break;
 			case ORDER:
+				active = this.orders;
+				break;
+			case ITEMORDER:
+				active = this.itemOrders;
+				break;
+			case DRIVERS:
+				active = this.drivers;
+				break;
+			case WAREHOUSE:
+				active = this.warehouses;
 				break;
 			case STOP:
 				return;
@@ -61,7 +257,7 @@ public class IMS {
 
 			LOGGER.info(() ->"What would you like to do with " + domain.name().toLowerCase() + ":");
 
-			Action.printActions();
+			Action.printActions(active);
 			Action action = Action.getAction(utils);
 
 			if (action == Action.RETURN) {
@@ -72,6 +268,7 @@ public class IMS {
 		} while (!changeDomain);
 	}
 
+	
 	public void doAction(CrudController<?> crudController, Action action) {
 		switch (action) {
 		case CREATE:
@@ -86,6 +283,15 @@ public class IMS {
 		case DELETE:
 			crudController.delete();
 			break;
+		case CALCULATE:
+			if(crudController.getClass().equals(OrderController.class))
+			{
+				((OrderController)crudController).calculate();
+			}
+			else
+			{
+				break;
+			}
 		case RETURN:
 			break;
 		default:

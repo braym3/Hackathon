@@ -1,20 +1,21 @@
-package com.qa.ims.persistence.domain;
+package com.qa.ims.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qa.ims.utils.Utils;
 
-public enum Domain {
+public enum ManagerSubmenu {
 
-	CUSTOMER("Information about customers"), ITEM("Individual Items"), ORDER("Purchases of items"),
-	ITEMORDER("Attach Items to Orders"), DRIVERS("Information about Drivers"), WAREHOUSE("Information about Warehouses"),STOP("To close the application");
+	ASSIGNDELIVERY("Assign delivery to driver"), WAREHOUSE("List all drivers at a warehouse"), 
+	NODELIVERY("List all drivers with no assigned deliveries"),	NODRIVER("List all deliveries with no assigned drivers"),
+	RETURN("To return to main menu");
 
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	private String description;
 
-	private Domain(String description) {
+	private ManagerSubmenu(String description) {
 		this.description = description;
 	}
 
@@ -23,16 +24,16 @@ public enum Domain {
 	}
 
 	public static void printDomains() {
-		for (Domain domain : Domain.values()) {
+		for (ManagerSubmenu domain : ManagerSubmenu.values()) {
 			LOGGER.info(domain.getDescription());
 		}
 	}
 
-	public static Domain getDomain(Utils utils) {
-		Domain domain;
+	public static ManagerSubmenu getDomain(Utils utils) {
+		ManagerSubmenu domain;
 		while (true) {
 			try {
-				domain = Domain.valueOf(utils.getString().toUpperCase());
+				domain = ManagerSubmenu.valueOf(utils.getString().toUpperCase());
 				break;
 			} catch (IllegalArgumentException e) {
 				LOGGER.error("Invalid selection please try again");

@@ -11,37 +11,44 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.qa.ims.persistence.domain.Customer;
+import com.qa.ims.persistence.domain.Warehouse;
 import com.qa.ims.utils.DBUtils;
 
-public class CustomerDAO implements Dao<Customer> {
-
+public class WarehouseDAO implements Dao<Warehouse>{
+	
 	public static final Logger LOGGER = LogManager.getLogger();
 
-	@Override
-	public Customer modelFromResultSet(ResultSet resultSet) throws SQLException {
-		Long id = resultSet.getLong("id");
-		String firstName = resultSet.getString("first_name");
-		String surname = resultSet.getString("surname");
-		String postcode = resultSet.getString("postcode");
-		return new Customer(id, firstName, surname, postcode);
-	}
-
 	/**
-	 * Reads all customers from the database
+	 * Creates a warehouse object from a result set
 	 * 
-	 * @return A list of customers
+	 * @param resultSet - result set from the warehouse table
+	 * 
+	 * @return The Warehouse object modelled from the result set
 	 */
 	@Override
-	public List<Customer> readAll() {
+	public Warehouse modelFromResultSet(ResultSet resultSet) throws SQLException {
+		Long id = resultSet.getLong("id");
+		String name = resultSet.getString("name");
+		String postcode = resultSet.getString("postcode");
+		return new Warehouse(id, name, postcode);
+	}
+
+
+	/**
+	 * Reads all warehouses from the database
+	 * 
+	 * @return A list of warehouses
+	 */
+	@Override
+	public List<Warehouse> readAll() {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT * FROM customers");) {
-			List<Customer> customers = new ArrayList<>();
+				ResultSet resultSet = statement.executeQuery("SELECT * FROM warehouses");) {
+			List<Warehouse> warehouses = new ArrayList<>();
 			while (resultSet.next()) {
-				customers.add(modelFromResultSet(resultSet));
+				warehouses.add(modelFromResultSet(resultSet));
 			}
-			return customers;
+			return warehouses;
 		} catch (SQLException e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
@@ -49,10 +56,10 @@ public class CustomerDAO implements Dao<Customer> {
 		return new ArrayList<>();
 	}
 
-	public Customer readLatest() {
+	public Warehouse readLatest() {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT * FROM customers ORDER BY id DESC LIMIT 1");) {
+				ResultSet resultSet = statement.executeQuery("SELECT * FROM warehouses ORDER BY id DESC LIMIT 1");) {
 			resultSet.next();
 			return modelFromResultSet(resultSet);
 		} catch (Exception e) {
@@ -63,18 +70,17 @@ public class CustomerDAO implements Dao<Customer> {
 	}
 
 	/**
-	 * Creates a customer in the database
+	 * Creates a warehouse in the database
 	 * 
-	 * @param customer - takes in a customer object. id will be ignored
+	 * @param warehouse - takes in a warehouse object
 	 */
 	@Override
-	public Customer create(Customer customer) {
+	public Warehouse create(Warehouse warehouse) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("INSERT INTO customers(first_name, surname, postcode) VALUES (?, ?, ?)");) {
-			statement.setString(1, customer.getFirstName());
-			statement.setString(2, customer.getSurname());
-			statement.setString(3, customer.getPostcode());
+						.prepareStatement("INSERT INTO warehouses(name, postcode) VALUES (?, ?)");) {
+			statement.setString(1, warehouse.getName());
+			statement.setString(2, warehouse.getPostcode());
 			statement.executeUpdate();
 			return readLatest();
 		} catch (Exception e) {
@@ -85,9 +91,9 @@ public class CustomerDAO implements Dao<Customer> {
 	}
 
 	@Override
-	public Customer read(Long id) {
+	public Warehouse read(Long id) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
-				PreparedStatement statement = connection.prepareStatement("SELECT * FROM customers WHERE id = ?");) {
+				PreparedStatement statement = connection.prepareStatement("SELECT * FROM warehouses WHERE id = ?");) {
 			statement.setLong(1, id);
 			try (ResultSet resultSet = statement.executeQuery();) {
 				resultSet.next();
@@ -101,23 +107,22 @@ public class CustomerDAO implements Dao<Customer> {
 	}
 
 	/**
-	 * Updates a customer in the database
+	 * Updates a warehouse in the database
 	 * 
-	 * @param customer - takes in a customer object, the id field will be used to
-	 *                 update that customer in the database
+	 * @param warehouse - takes in a warehouse object, the id field will be used to
+	 *                 update that warehouse in the database
 	 * @return
 	 */
 	@Override
-	public Customer update(Customer customer) {
+	public Warehouse update(Warehouse warehouse) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement("UPDATE customers SET first_name = ?, surname = ?, postcode = ? WHERE id = ?");) {
-			statement.setString(1, customer.getFirstName());
-			statement.setString(2, customer.getSurname());
-			statement.setString(2, customer.getPostcode());
-			statement.setLong(3, customer.getId());
+						.prepareStatement("UPDATE warehouses SET name = ?, postcode = ? WHERE id = ?");) {
+			statement.setString(1, warehouse.getName());
+			statement.setString(2, warehouse.getPostcode());
+			statement.setLong(3, warehouse.getId());
 			statement.executeUpdate();
-			return read(customer.getId());
+			return read(warehouse.getId());
 		} catch (Exception e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
@@ -126,14 +131,14 @@ public class CustomerDAO implements Dao<Customer> {
 	}
 
 	/**
-	 * Deletes a customer in the database
+	 * Deletes a warehouse in the database
 	 * 
-	 * @param id - id of the customer
+	 * @param id - id of the warehouse
 	 */
 	@Override
 	public int delete(long id) {
 		try (Connection connection = DBUtils.getInstance().getConnection();
-				PreparedStatement statement = connection.prepareStatement("DELETE FROM customers WHERE id = ?");) {
+				PreparedStatement statement = connection.prepareStatement("DELETE FROM warehouses WHERE id = ?");) {
 			statement.setLong(1, id);
 			return statement.executeUpdate();
 		} catch (Exception e) {
