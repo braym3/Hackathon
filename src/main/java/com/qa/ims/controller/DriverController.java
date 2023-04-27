@@ -71,6 +71,9 @@ public class DriverController implements CrudController<Driver>{
 			for(Order order : driver.getDeliveries()) {
 				LOGGER.info(order);
 			}
+			if(driver.getDeliveries().isEmpty()) {
+				LOGGER.info("You have no assigned deliveries");
+			}
 			return driver.getDeliveries();
 		} catch (Exception e) {
 			LOGGER.info("No driver found with ID: " + id + ". Please try again");
@@ -93,6 +96,9 @@ public class DriverController implements CrudController<Driver>{
 				if(order.getDelivered() == 0) {
 					LOGGER.info(order);
 				}
+			}
+			if(driver.getDeliveries().isEmpty()) {
+				LOGGER.info("You have no undelivered orders");
 			}
 			return driver.getDeliveries();
 		} catch (Exception e) {
